@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 const BIN_ID = process.env.JSONBIN_BIN_ID;
 const API_KEY = process.env.JSONBIN_API_KEY;
 
@@ -9,6 +11,11 @@ export async function getData() {
       "X-Master-Key": API_KEY
     }
   });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from JSONBin");
+  }
+
   const data = await res.json();
   return data.record;
 }
@@ -22,5 +29,10 @@ export async function updateData(newData) {
     },
     body: JSON.stringify(newData)
   });
+
+  if (!res.ok) {
+    throw new Error("Failed to update JSONBin");
+  }
+
   return res.json();
 }
