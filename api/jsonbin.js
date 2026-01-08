@@ -3,7 +3,7 @@ const API_KEY = process.env.JSONBIN_API_KEY;
 
 const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-export async function getData() {
+async function getData() {
   const res = await fetch(`${BASE_URL}/latest`, {
     headers: {
       "X-Master-Key": API_KEY
@@ -19,7 +19,7 @@ export async function getData() {
   return json.record || { admins: [] };
 }
 
-export async function updateData(data) {
+async function updateData(data) {
   const res = await fetch(BASE_URL, {
     method: "PUT",
     headers: {
@@ -36,3 +36,5 @@ export async function updateData(data) {
 
   return res.json();
 }
+
+module.exports = { getData, updateData };
