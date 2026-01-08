@@ -14,10 +14,9 @@ export default async function handler(req, res) {
     }
 
     const db = await getData();
-    db.admins = db.admins || [];
+    db.admins = Array.isArray(db.admins) ? db.admins : [];
 
-    const exists = db.admins.find(a => a.email === email);
-    if (exists) {
+    if (db.admins.find(a => a.email === email)) {
       return res.status(409).json({ message: "Email already exists" });
     }
 
@@ -29,17 +28,18 @@ export default async function handler(req, res) {
       adminName,
       email,
       password: hashedPassword,
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     });
 
     await updateData(db);
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Admin registered successfully"
     });
 
   } catch (err) {
-    return res.status(500).json({ message: "Server error", err });
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ message: err.message });
   }
 }
