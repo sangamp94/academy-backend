@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
-import { getData, updateData } from "./jsonbin";
+const bcrypt = require("bcryptjs");
+const { getData, updateData } = require("./jsonbin");
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
-}
+};
