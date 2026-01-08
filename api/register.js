@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
-import connectDB from "./db";
-import Admin from "./models/Admin";
+import { getData, updateData } from "./jsonbin";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -8,34 +7,39 @@ export default async function handler(req, res) {
   }
 
   try {
-    await connectDB();
-
     const { academyName, adminName, email, password } = req.body;
 
     if (!academyName || !adminName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields required" });
     }
 
-    const existingAdmin = await Admin.findOne({ email });
-    if (existingAdmin) {
-      return res.status(409).json({ message: "Email already registered" });
+    const db = await getData();
+    db.admins = db.admins || [];
+
+    const exists = db.admins.find(a => a.email === email);
+    if (exists) {
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await Admin.create({
+    db.admins.push({
+      id: Date.now().toString(),
       academyName,
       adminName,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      createdAt: new Date()
     });
+
+    await updateData(db);
 
     return res.status(201).json({
       success: true,
       message: "Admin registered successfully"
     });
 
-  } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", err });
   }
 }
