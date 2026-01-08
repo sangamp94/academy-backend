@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import connectDB from "./db";
-import Admin from "./models/Admin";
+import { getData } from "./jsonbin";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -9,15 +8,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    await connectDB();
-
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
+      return res.status(400).json({ message: "Email & password required" });
     }
 
-    const admin = await Admin.findOne({ email });
+    const db = await getData();
+    const admin = db.admins.find(a => a.email === email);
+
     if (!admin) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -29,7 +28,7 @@ export default async function handler(req, res) {
 
     const token = jwt.sign(
       {
-        adminId: admin._id,
+        adminId: admin.id,
         academyName: admin.academyName,
         email: admin.email
       },
@@ -43,7 +42,7 @@ export default async function handler(req, res) {
       token
     });
 
-  } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", err });
   }
 }
