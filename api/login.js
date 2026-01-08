@@ -1,8 +1,8 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { getData } from "./jsonbin";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { getData } = require("./jsonbin");
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -21,8 +21,8 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
+    const ok = await bcrypt.compare(password, admin.password);
+    if (!ok) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -36,13 +36,14 @@ export default async function handler(req, res) {
       { expiresIn: "7d" }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: "Login successful",
       token
     });
 
   } catch (err) {
-    return res.status(500).json({ message: "Server error", err });
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
-}
+};
