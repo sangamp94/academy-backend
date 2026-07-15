@@ -1,7 +1,7 @@
 {
-  "enabled": true,
+  "enabled": false,
   "maintenance": false,
   "forceUpdate": false,
   "minVersion": 1,
-  "message": "Welcome"
+  "message": "Update Your app"
 }
