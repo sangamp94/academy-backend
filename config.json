@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "maintenance": false,
   "forceUpdate": true,
   "minVersion": 2,
