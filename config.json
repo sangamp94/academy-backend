@@ -1,7 +1,8 @@
 {
   "enabled": true,
   "maintenance": false,
-  "forceUpdate": false,
-  "minVersion": 1,
-  "message": "Welcome to Streamify IPTV Player"
+  "forceUpdate": true,
+  "minVersion": 2,
+  "latestVersion": 2,
+  "updateMessage": "Please update Streamify to continue using the app."
 }
